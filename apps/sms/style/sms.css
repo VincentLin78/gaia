@@ -813,11 +813,29 @@ ul.contact-prompt {
   z-index: 5;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: -moz-calc(100% - 5rem);
+  max-height: -moz-calc(100% - 7.5rem);
   text-align: left;
   color: white;
+  font-family: 'Feura Sans Light';
+  font-weight: lighter;
 }
 
+body[role="application"] form[role="dialog"][data-type="action"] > section:first-child{
+  height: 7.5rem;
+  border-bottom: 0.1rem solid #616262;
+  padding-bottom: 0.5rem;
+  padding-left: 2.5rem;
+}
+
+ul.contact-prompt .number{
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+ul.contact-prompt .name{
+  font-size: 2.3rem;
+  line-height: 2.5rem;
+}
 
 section[role="region"].new .article-list[data-type="list"]  li:first-child {
   margin-top: 4.6rem;

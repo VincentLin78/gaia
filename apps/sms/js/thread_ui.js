@@ -846,6 +846,7 @@ var ThreadUI = global.ThreadUI = {
           carrierTag.textContent = Utils.getContactCarrier(
             number, contacts[0].tel
           );
+
           carrierTag.classList.remove('hide');
         }
       } else {
@@ -1588,7 +1589,9 @@ var ThreadUI = global.ThreadUI = {
       var title = details.title || number;
       var type = current.type && current.type.length ? current.type[0] : '';
       var carrier = current.carrier ? (current.carrier + ', ') : '';
-      var separator = type || carrier ? ' | ' : '';
+
+      var separator = type || carrier ? ', ' : '';
+
       var li = document.createElement('li');
       var data = {
         name: title,

@@ -1512,7 +1512,7 @@ suite('thread_ui.js >', function() {
       );
     });
 
-    test('Rendered Contact "type | number"', function() {
+    test('Rendered Contact "type, number"', function() {
       var ul = document.createElement('ul');
       var contact = new MockContact();
       var html;
@@ -1528,10 +1528,10 @@ suite('thread_ui.js >', function() {
       });
       html = ul.firstElementChild.innerHTML;
 
-      assert.ok(html.contains('Mobile | +346578888888'));
+      assert.ok(html.contains('Mobile, +346578888888'));
     });
 
-    test('Rendered Contact highlighted "type | number"', function() {
+    test('Rendered Contact highlighted "type, number"', function() {
       var ul = document.createElement('ul');
       var contact = new MockContact();
       var html;
@@ -1548,11 +1548,12 @@ suite('thread_ui.js >', function() {
       html = ul.firstElementChild.innerHTML;
 
       assert.ok(
-        html.contains('Mobile | +<span class="highlight">346578888888</span>')
+        html.contains('Mobile, +<span class="highlight">346578888888</span>')
       );
     });
 
-    test('Rendered Contact "type | carrier, number"', function() {
+
+    test('Rendered Contact "type, carrier, number"', function() {
       var ul = document.createElement('ul');
       var contact = new MockContact();
       var html;
@@ -1566,10 +1567,10 @@ suite('thread_ui.js >', function() {
       });
       html = ul.firstElementChild.innerHTML;
 
-      assert.ok(html.contains('Mobile | TEF, +346578888888'));
+      assert.ok(html.contains('Mobile, TEF, +346578888888'));
     });
 
-    test('Rendered Contact highlighted "type | carrier, number"', function() {
+    test('Rendered Contact highlighted "type, carrier, number"', function() {
       var ul = document.createElement('ul');
       var contact = new MockContact();
       var html;
@@ -1585,7 +1586,7 @@ suite('thread_ui.js >', function() {
 
       assert.ok(
         html.contains(
-          'Mobile | TEF, +<span class="highlight">346578888888</span>'
+          'Mobile, TEF, +<span class="highlight">346578888888</span>'
         )
       );
     });
