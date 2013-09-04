@@ -26,6 +26,10 @@ var UtilityTray = {
     window.addEventListener('attentionscreenshow', this);
 
     this.overlay.addEventListener('transitionend', this);
+
+    if (window.navigator.mozMobileConnection) {
+      LazyLoader.load('js/cost_control.js');
+    }
   },
 
   handleEvent: function ut_handleEvent(evt) {
