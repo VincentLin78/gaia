@@ -19,8 +19,12 @@
   width: 4rem;
   height: 4rem;
   margin: 0.5rem;
-  background: transparent url(/shared/resources/branding/Browser.png) no-repeat center center;
+  background: transparent url(/shared/resources/branding/Browser_60.png) no-repeat center center;
   background-size: 4rem 4rem;
+}
+
+#software-home-button,
+#fullscreen-software-home-button {
 }
 
 #fullscreen-software-home-button {
