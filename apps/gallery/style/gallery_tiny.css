@@ -1,0 +1,29 @@
+
+[data-view="thumbnailListView"] #thumbnails,
+[data-view="thumbnailSelectView"] #thumbnails,
+[data-view="pickView"] #thumbnails,
+[data-view="previewView"] #thumbnails {
+	visibility: visible;
+	pointer-events: auto;
+  bottom: 0;
+}
+
+[data-view="thumbnailListView"] #thumbnail-list-view,
+[data-view="previewView"] #thumbnail-list-view,
+[data-view="thumbnailSelectView"] #thumbnail-select-view,
+[data-view="fullscreenView"] #fullscreen-view,
+[data-view="pickView"] #pick-view,
+[data-view="editView"] #edit-view,
+[data-view="cropView"] #crop-view {
+	display: block;
+}
+
+
+[data-view="previewView"] #fullscreen-view {
+	display: none;
+}
+
+[data-view="fullscreenView"] #thumbnails {
+  visibility: hidden;
+  pointer-events: none;
+}

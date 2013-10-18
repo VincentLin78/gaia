@@ -85,7 +85,7 @@ function editPhoto(n) {
   });
 
   // Display the edit screen
-  setView(editView);
+  setView('editView');
 
   // Set the default option buttons to correspond to those edits
   editOptionButtons.forEach(function(b) { b.classList.remove('selected'); });
@@ -247,7 +247,7 @@ function setEditTool(tool) {
   // acts as a mode switch button and a "do the crop now" button.
   imageEditor.cropImage(function() {
     imageEditor.hideCropOverlay();
-
+    $('edit-view').dataset.mode = tool;
     // Now select and show the correct set based on tool
     switch (tool) {
     case 'exposure':
@@ -289,6 +289,7 @@ function exitEditMode(saved) {
   // Enables the save button once the edited image has been saved
   $('edit-save-button').disabled = false;
 
+  $('edit-view').dataset.mode = '';
   // Revoke the blob URL we've been using
   URL.revokeObjectURL(editedPhotoURL);
   editedPhotoURL = null;
@@ -311,10 +312,11 @@ function exitEditMode(saved) {
   // the edited photo.
   if (saved) {
     currentFileIndex = 0; // because the saved image will be newest
-    setView(thumbnailListView);
-  }
-  else
+    setView('thumbnailListView');
+  } else {
+    setView('fullscreenView');
     showFile(currentFileIndex);
+  }
 }
 
 // When the user clicks the save button, we produce a full-size version

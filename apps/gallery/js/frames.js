@@ -14,29 +14,42 @@ var frames = $('frames');
 // element, and video player controls within the div, and you can refer to
 // those as currentFrame.image and currentFrame.video.player and
 // currentFrame.video.controls.
+
+
 var previousFrame = new MediaFrame($('frame1'));
 var currentFrame = new MediaFrame($('frame2'));
 var nextFrame = new MediaFrame($('frame3'));
+
+var FramesDomsId = ['back', 'delete', 'edit', 'share'];
+var FramesDoms = {};
+for (var i = 0; i < FramesDomsId.length; i++) {
+  var name = 'fullscreen-' + FramesDomsId[i] + '-button';
+  FramesDoms[FramesDomsId[i]] = IsTinyScreen ?
+      document.getElementById(name) :
+      document.getElementById(name + '-tablet');
+}
+
 
 // When this variable is set to true, we ignore any user gestures
 // so we don't try to pan or zoom during a frame transition.
 var transitioning = false;
 
-// Clicking on the back button goes back to the thumbnail view
-$('fullscreen-back-button').onclick = setView.bind(null, thumbnailListView);
+// Clicking on the back button goes back to the thumbnail view on mobile
+// or preview view on tablet
+FramesDoms.back.onclick = setView.bind(null, 'previewView');
 
 // Clicking the delete button while viewing a single item deletes that item
-$('fullscreen-delete-button').onclick = deleteSingleItem;
+FramesDoms.delete.onclick = deleteSingleItem;
 
 // Clicking the Edit button while viewing a photo switches to edit mode
-$('fullscreen-edit-button').onclick = function() {
+FramesDoms.edit.onclick = function() {
   loader.load('js/ImageEditor.js', function() {
     editPhotoIfCardNotFull(currentFileIndex);
   });
 };
 
 // In fullscreen mode, the share button shares the current item
-$('fullscreen-share-button').onclick = shareSingleItem;
+FramesDoms.share.onclick = shareSingleItem;
 
 // Use the GestureDetector.js library to handle gestures.
 // This will generate tap, pan, swipe and transform events
@@ -100,8 +113,8 @@ function deleteSingleItem() {
   }
   if (confirm(msg)) {
     // disable delete and share button to prevent operations while delete item
-    $('fullscreen-delete-button').classList.add('disabled');
-    $('fullscreen-share-button').classList.add('disabled');
+    FramesDoms.delete.classList.add('disabled');
+    FramesDoms.share.classList.add('disabled');
 
     deleteFile(currentFileIndex);
   }
@@ -138,10 +151,25 @@ function dblTapHandler(e) {
   doubletapOnPhoto(e);
 }
 
+function resetFrames() {
+  nextFrame.reset();
+  previousFrame.reset();
+  currentFrame.reset();
+}
+
 function singletap(e) {
-  if (currentView === fullscreenView) {
-    if (currentFrame.displayingImage || currentFrame.video.player.paused) {
-      fullscreenView.classList.toggle('toolbarhidden');
+  switch (currentView) {
+    // these cases happen only when it has preview mode
+    case 'thumbnailListView':
+    case 'previewView':
+      setView('fullscreenView');
+      resetFrames();
+      break;
+    case 'fullscreenView':
+      if (currentFrame.displayingImage ||
+          currentFrame.video.player.paused) {
+        fullscreenView.classList.toggle('toolbarhidden');
+      break;
     }
   }
 }
@@ -359,24 +387,26 @@ function resetFramesPosition() {
 // Switch from thumbnail list view to single-picture fullscreen view
 // and display the specified file
 function showFile(n) {
-  setView(fullscreenView); // Switch to fullscreen mode if not already there
+  $('frames').classList.remove('loading-background');
+  updateFrames(n);
 
+  // Disable the edit button if this is a video or mediaDB is scanning
+  if (files[n].metadata.video || photodb.scanning)
+    FramesDoms.edit.classList.add('disabled');
+  else
+    FramesDoms.edit.classList.remove('disabled');
+  // Always bring delete and share button back after show file
+  FramesDoms.delete.classList.remove('disabled');
+  FramesDoms.share.classList.remove('disabled');
+}
+
+function updateFrames(n) {
   setupFrameContent(n - 1, previousFrame);
   setupFrameContent(n, currentFrame);
   setupFrameContent(n + 1, nextFrame);
   currentFileIndex = n;
 
   resetFramesPosition();
-
-  // Disable the edit button if this is a video or mediaDB is scanning
-  // Enable otherwise
-  if (files[n].metadata.video || photodb.scanning)
-    $('fullscreen-edit-button').classList.add('disabled');
-  else
-    $('fullscreen-edit-button').classList.remove('disabled');
-  // Always bring delete and share button back after show file
-  $('fullscreen-delete-button').classList.remove('disabled');
-  $('fullscreen-share-button').classList.remove('disabled');
 }
 
 // Transition to the next file, animating it over the specified time (ms).
@@ -421,14 +451,15 @@ function nextFile(time) {
     // Reposition the item that just transitioned off the screen
     // to reset any zooming and panning
     previousFrame.reset();
+    updateFocusThumbnail();
   });
 
   // Disable the edit button if this is a video or
   // mediaDB is scanning, enable otherwise
   if (currentFrame.displayingVideo || photodb.scanning)
-    $('fullscreen-edit-button').classList.add('disabled');
+    FramesDoms.edit.classList.add('disabled');
   else
-    $('fullscreen-edit-button').classList.remove('disabled');
+    FramesDoms.edit.classList.remove('disabled');
 }
 
 // Just like nextFile() but in the other direction
@@ -470,12 +501,14 @@ function previousFile(time) {
     this.removeEventListener('transitionend', done);
     // Reset the size and position of the item that just panned off
     nextFrame.reset();
+    updateFocusThumbnail();
   });
 
   // Disable the edit button if we're now viewing a video or mediaDB
   // is scanning, enable otherwise
   if (currentFrame.displayingVideo || photodb.scanning)
-    $('fullscreen-edit-button').classList.add('disabled');
+    FramesDoms.edit.classList.add('disabled');
   else
-    $('fullscreen-edit-button').classList.remove('disabled');
+    FramesDoms.edit.classList.remove('disabled');
 }
+
