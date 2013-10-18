@@ -20,6 +20,7 @@
     <script defer src="shared/js/lazy_loader.js"></script>
     <script defer src="shared/js/visibility_monitor.js"></script>
     <script defer src="shared/js/media/media_utils.js"></script>
+    <script defer src="shared/js/screen_layout.js"></script>
 
     <!-- Specific code -->
     <script defer src="js/config.js"></script>
@@ -27,7 +28,10 @@
   </head>
 
   <body role="application">
-    <section role="region" id="thumbnail-list-view" class="hidden">
+    <section role="region" id="thumbnail-list-view" class="skin-organic hidden">
+      <header id="thumbnails-list-top">
+        <h1 id="thumbnail-list-title" data-l10n-id="gallery">Gallery</h1>
+      </header>
       <footer id="thumbnails-bottom">
         <a id="thumbnails-camera-button" class="button"></a>
         <a id="thumbnails-select-button" class="button"></a>
@@ -45,9 +49,32 @@
         <a id="thumbnails-share-button" class="button"></a>
       </footer>
     </section>
-
+    <section role="region" id="preview-view" class="skin-organic">
+      <header id="preview-header">
+        <h1 idata-l10n-id="preview">Preview</h1>
+      </header>
+      <div id="preview-frame" class="frame">
+      </div>
+    </section>
     <section role="region" id="fullscreen-view" class="hidden skin-organic">
-
+      <header id="fullscreen-toolbar-header">
+        <menu type="toolbar">
+          <a id="fullscreen-camera-button-tablet">
+            <span class="icon icon-camera"></span>
+          </a>
+          <a id="fullscreen-edit-button-tablet">
+            <span class="icon icon-picedit"></span>
+          </a>
+          <a id="fullscreen-share-button-tablet">
+            <span class="icon icon-share"></span>
+          </a>
+          <a id="fullscreen-delete-button-tablet">
+            <span class="icon icon-delete"></span>
+          </a>
+        </menu>
+        <button id="fullscreen-back-button-tablet"><span class="icon icon-back"></span></button>
+        <h1 data-l10n-id="gallery">Gallery</h1>
+      </header>
       <div id="frames">
         <!-- the current photo plus next and previous waiting in the wings -->
         <div id="frame1" class="frame"></div>

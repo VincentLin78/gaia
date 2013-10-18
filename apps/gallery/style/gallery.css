@@ -31,6 +31,10 @@ section {
   display: none;
 }
 
+#thumbnails-list-top {
+  display: none;
+}
+
 /* All of the main views fill the screen */
 #thumbnail-list-view, #thumbnail-select-view, #fullscreen-view, #pick-view, #edit-view, #crop-view {
   position: absolute;
@@ -208,7 +212,8 @@ section {
   margin-right: 0;
 }
 
-.thumbnail.selected {
+.thumbnail.selected,
+.thumbnail.focus {
   outline: solid #00aacc 0.3rem;
   outline-offset: -0.2rem;
 }
@@ -429,6 +434,10 @@ footer {
   font-size: 0;
   transition: transform 0.2s linear;
 }
+/* only for large screen */
+#fullscreen-toolbar-header {
+  display: none;
+}
 
 #fullscreen-toolbar > a {
   display: inline-block;
@@ -444,19 +453,23 @@ footer {
   opacity: 0;
 }
 
-#fullscreen-camera-button {
+#fullscreen-camera-button,
+#fullscreen-camera-button-tablet > .icon-camera {
   background-image: url('images/iconaction_camera_30x30.png');
 }
 
-#fullscreen-edit-button {
+#fullscreen-edit-button,
+#fullscreen-edit-button-tablet > .icon-picedit {
   background-image: url('images/iconaction_camera_editphoto_30x30.png');
 }
 
-#fullscreen-share-button {
+#fullscreen-share-button,
+#fullscreen-share-button-tablet > .icon-share {
   background-image: url('images/iconaction_share_30x30.png');
 }
 
-#fullscreen-delete-button {
+#fullscreen-delete-button,
+#fullscreen-delete-button-tablet > .icon-delete {
   background-image: url('images/iconaction_delete_30x30.png');
 }
 
