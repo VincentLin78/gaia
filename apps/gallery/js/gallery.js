@@ -51,9 +51,15 @@ var thumbnails = $('thumbnails');
 var thumbnailListView = $('thumbnail-list-view');
 var thumbnailSelectView = $('thumbnail-select-view');
 var fullscreenView = $('fullscreen-view');
+var previewView = $('preview-view');
 var editView = $('edit-view');
 var pickView = $('pick-view');
 var cropView = $('crop-view');
+
+var PictureTitle = $('picture-title');
+var PreviewTitle = $('preview-title');
+
+var previewFrame;
 
 // These are the top-level view objects.
 // This array is used by setView()
@@ -65,6 +71,10 @@ var currentView;
 
 // This will be set to "ltr" or "rtl" when we get our localized event
 var languageDirection;
+
+var IsTinyScreen = ScreenLayout.getCurrentLayout('tiny');
+ScreenLayout.watch('portrait', '(orientation: portrait)');
+var IsPortrait = ScreenLayout.getCurrentLayout('portrait');
 
 // This array holds information about all the image and video files we
 // know about. Each array element is an object that includes a
@@ -94,6 +104,8 @@ var visibilityMonitor;
 
 var loader = LazyLoader;
 
+var HasFocusdOnThumbnail = false;
+
 // The localized event is the main entry point for the app.
 // We don't do anything until we receive it.
 navigator.mozL10n.ready(function showBody() {
@@ -103,6 +115,13 @@ navigator.mozL10n.ready(function showBody() {
 
   // <body> children are hidden until the UI is translated
   document.body.classList.remove('hidden');
+
+  // load frame_script.js for preview mode on tablet
+  if (!IsTinyScreen) {
+    loader.load('js/frame_scripts.js', function() {
+      initWithPreviewMode();
+    });
+  }
 
   // Now initialize the rest of the app. But don't re-initialize if the user
   // switches languages when the app is already running
@@ -132,7 +151,11 @@ function init() {
   $('crop-done-button').onclick = cropAndEndPick;
 
   // The camera buttons should launch the camera app
-  $('fullscreen-camera-button').onclick = launchCameraApp;
+  if (IsTinyScreen)
+    $('fullscreen-camera-button').onclick = launchCameraApp;
+  else
+    $('fullscreen-camera-button-tablet').onclick = launchCameraApp;
+
   $('thumbnails-camera-button').onclick = launchCameraApp;
   $('overlay-camera-button').onclick = launchCameraApp;
 
@@ -278,6 +301,15 @@ function initDB() {
     // if we're still having the scanning overlay there are no photo's
     if (currentOverlay === 'scanning')
       showOverlay('emptygallery');
+    // on tablet, we'll preview latest one if scanend and user not choose any
+    // yet
+    else if (!HasFocusdOnThumbnail && !IsTinyScreen) {
+      loader.load('js/frame_scripts.js', function() {
+        updatePreviewFrame(0);
+        updateFocusThumbnail();
+      });
+      HasFocusdOnThumbnail = true;
+    }
 
     // Hide the scanning indicator
     $('progress').classList.add('hidden');
@@ -471,8 +503,10 @@ function fileDeleted(filename) {
   // If we're in fullscreen mode, then the only way this function
   // gets called is when we delete the currently displayed photo. This means
   // that we need to redisplay.
-  if (currentView === fullscreenView && files.length > 0) {
-    showFile(currentFileIndex);
+  if (files.length > 0) {
+    if (currentView === fullscreenView || !IsTinyScreen)
+      showFile(currentFileIndex);
+    updateFocusThumbnail();
   }
 
   // If there are no more photos show the "no pix" overlay
@@ -589,7 +623,12 @@ function scrollToShowThumbnail(n) {
 function setView(view) {
   if (currentView === view)
     return;
-
+  if (view !== fullscreenView && view !== editView && view !== pickView &&
+      view !== cropView && !IsPortrait) {
+    previewView.classList.remove('hidden');
+  } else {
+    previewView.classList.add('hidden');
+  }
   // Do any necessary cleanup of the view we're exiting
   switch (currentView) {
   case thumbnailSelectView:
@@ -630,6 +669,9 @@ function setView(view) {
   switch (view) {
   case thumbnailListView:
     thumbnails.className = 'list';
+    loader.load('js/frame_scripts.js', function() {
+      updateFocusThumbnail();
+    });
     break;
   case thumbnailSelectView:
     thumbnails.className = 'select';
@@ -842,18 +884,46 @@ function thumbnailClickHandler(evt) {
   var target = evt.target;
   if (!target || !target.classList.contains('thumbnail'))
     return;
-
-  if (currentView === thumbnailListView || currentView === fullscreenView) {
+  HasFocusdOnThumbnail = true;
+  if ((!IsTinyScreen && currentView !== pickView) ||
+      currentView === thumbnailListView ||
+      currentView === fullscreenView) {
     loader.load('js/frame_scripts.js', function() {
       showFile(parseInt(target.dataset.index));
+      updateFocusThumbnail(target);
     });
   }
-  else if (currentView === thumbnailSelectView) {
+
+  if (currentView === thumbnailSelectView) {
     updateSelection(target);
-  }
-  else if (currentView === pickView) {
+  } else if (currentView === pickView) {
     cropPickedImage(files[parseInt(target.dataset.index)]);
   }
+}
+
+var previousFocus = null;
+
+// Tablet outline the pic we're focusing on
+function updateFocusThumbnail(target) {
+  if (IsTinyScreen)
+    return;
+  // If no specified target, we'll focus on currentFileIndex
+  target = target ? target :
+            document.querySelector('.thumbnail[data-index="' +
+              currentFileIndex + '"]');
+
+  if (!target)
+    return;
+
+  PreviewTitle.textContent = PictureTitle.textContent =
+    previewFrame.filename;
+  if (previousFocus) {
+    previousFocus.classList.remove('focus');
+  }
+  target.classList.add('focus');
+  // prevent scaning all the pics each time, we store it and modify it
+  // when updating
+  previousFocus = target;
 }
 
 function clearSelection() {
