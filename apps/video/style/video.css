@@ -471,7 +471,9 @@ header .icon:after {
 #videoControls.hidden {
   opacity: 0;
 }
-
+#switch-fullscreen {
+  display: none;
+}
 /* main control bar: play|pause, timeupdate, rwd|fwd
    For landscape mode here. Settings for portrait mode is written in
    media query at bottom */

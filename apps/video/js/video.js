@@ -1,5 +1,13 @@
 'use strict';
 
+var IsTinyScreen = ScreenLayout.getCurrentLayout('tiny');
+
+ScreenLayout.watch('portrait', '(orientation: portrait)');
+
+var IsPortrait = ScreenLayout.getCurrentLayout('portrait');
+
+
+
 var dom = {};
 
 var ids = ['thumbnail-list-view', 'thumbnails-bottom',
@@ -12,7 +20,7 @@ var ids = ['thumbnail-list-view', 'thumbnails-bottom',
            'thumbnails-single-info-button', 'info-view', 'info-close-button',
            'player', 'overlay', 'overlay-title', 'overlay-text',
            'overlay-menu', 'storage-setting-button',
-           'videoControls', 'videoBar', 'videoActionBar',
+           'videoControls', 'videoBar', 'videoActionBar', 'switch-fullscreen',
            'close', 'play', 'playHead', 'timeSlider', 'elapsedTime',
            'video-title', 'duration-text', 'elapsed-text', 'bufferedTime',
            'slider-wrapper', 'throbber', 'delete-video-button',
@@ -21,6 +29,28 @@ var ids = ['thumbnail-list-view', 'thumbnails-bottom',
 ids.forEach(function createElementRef(name) {
   dom[toCamelCase(name)] = document.getElementById(name);
 });
+
+if (!IsTinyScreen) {
+  if (!IsPortrait)
+    dom.fullscreenView.classList.add('landscape');
+
+  dom.fullscreenView.classList.remove('hidden');
+
+  window.addEventListener('screenlayoutchange', function(evt) {
+    if (IsPortrait === evt.detail.status)
+      return;
+    IsPortrait = evt.detail.status;
+    if (IsPortrait) {
+      dom.fullscreenView.classList.remove('landscape');
+      if (!dom.fullscreenView.classList.contains('full'))
+        hidePlayer();
+    } else {
+      dom.fullscreenView.classList.add('landscape');
+      dom.fullscreenView.classList.remove('hidden');
+    }
+  });
+}
+
 
 var currentView = dom.thumbnailListView;
 
@@ -248,7 +278,14 @@ function hideInfoView() {
 
 function showSelectView() {
   dom.thumbnailListView.classList.add('hidden');
-  dom.fullscreenView.classList.add('hidden');
+
+  if (!IsTinyScreen) {
+    // we hide control panel when in select view and landscape
+    dom.fullscreenView.classList.add('select-view');
+  } else {
+    dom.fullscreenView.classList.add('hidden');
+  }
+
   dom.thumbnailSelectView.classList.remove('hidden');
   currentView = dom.thumbnailSelectView;
 
@@ -482,6 +519,11 @@ function updateDialog() {
 }
 
 function thumbnailClickHandler(videodata) {
+  // tablet has a preview window for video, we don't stop parsingMetadata here
+  if (IsPortrait && !IsTinyScreen) {
+    showPlayer(videodata, !pendingPick);
+  }
+
   if (currentView === dom.thumbnailListView ||
       currentView === dom.fullscreenView) {
     // Be certain that metadata parsing has stopped before we show the
@@ -585,6 +627,8 @@ function handlePlayerTouchStart(event) {
   if (event.target == dom.play) {
     setVideoPlaying(dom.player.paused);
   } else if (event.target == dom.close) {
+    if (!IsTinyScreen)
+      dom.fullscreenView.classList.remove('full');
     hidePlayer(true);
     // call preventDefault to prevent the click for underlying thumbnail items.
     event.preventDefault();
@@ -605,8 +649,10 @@ function handlePlayerTouchStart(event) {
 
 // Align vertically fullscreen view
 function setPlayerSize() {
-  var containerWidth = window.innerWidth;
-  var containerHeight = window.innerHeight;
+  var containerWidth = IsTinyScreen ? window.innerWidth :
+                       dom.fullscreenView.clientWidth;
+  var containerHeight = IsTinyScreen ? window.innerHeight :
+                        dom.fullscreenView.clientHeight;
 
   // Don't do anything if we don't know our size.
   // This could happen if we get a resize event before our metadata loads
@@ -687,11 +733,13 @@ function setVideoUrl(player, video, callback) {
 // show video player
 function showPlayer(video, autoPlay) {
   currentVideo = video;
-
-  dom.thumbnails.hidden = true;
-  dom.thumbnailListView.classList.add('hidden');
-  dom.thumbnailSelectView.classList.add('hidden');
-  dom.fullscreenView.classList.remove('hidden');
+  if (IsPortrait || IsTinyScreen) {
+    dom.thumbnails.hidden = true;
+    dom.thumbnailListView.classList.add('hidden');
+    dom.thumbnailSelectView.classList.add('hidden');
+    dom.fullscreenView.classList.remove('hidden');
+    dom.fullscreenView.classList.add('full');
+  }
   currentView = dom.fullscreenView;
 
   // switch to the video player view
@@ -753,9 +801,11 @@ function hidePlayer(updateMetadata) {
 
   function completeHidingPlayer() {
     // switch to the video gallery view
-    dom.fullscreenView.classList.add('hidden');
-    dom.thumbnailSelectView.classList.add('hidden');
-    dom.thumbnailListView.classList.remove('hidden');
+    if (IsPortrait || IsTinyScreen) {
+      dom.fullscreenView.classList.add('hidden');
+      dom.thumbnailSelectView.classList.add('hidden');
+      dom.thumbnailListView.classList.remove('hidden');
+    }
     currentView === dom.thumbnailListView;
 
     dom.play.classList.remove('paused');

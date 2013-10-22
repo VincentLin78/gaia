@@ -1,0 +1,47 @@
+
+@media (orientation: landscape) {
+	#fullscreen-view {
+		width: 60%;
+	}
+	#thumbnail-list-view, #thumbnail-select-view {
+		width: 40%;
+	}
+	#thumbnails {
+		width: 40%;
+	}
+	#fullscreen-view.landscape {
+		left: 40%;
+		width: 60%;
+	}
+	#fullscreen-view.full {
+		left: 0%;
+		width: 100%;
+	}
+	#fullscreen-view.select-view #videoControls {
+		display: none;
+	}
+	#switch-fullscreen {
+		display: block;
+	}
+	#fullscreen-view:not(.full) #videoControls #close {
+		display: none;
+	}
+}
+@media (orientation: portrait) {
+	.thumbnail {
+		width: calc(50% - 2rem);
+		float: left;
+	}
+	.inner {
+		position: relative;
+	}
+	#fullscreen-view {
+		display: none;
+	}
+	#fullscreen-view.full {
+		display: block;
+	}
+	#fullscreen-view.select-view {
+		display: none;
+	}
+}
