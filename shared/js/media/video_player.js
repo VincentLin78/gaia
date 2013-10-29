@@ -43,6 +43,8 @@ function VideoPlayer(container) {
   var elapsedBar = newelt(progress, 'div', 'videoPlayerElapsedBar');
   var playHead = newelt(progress, 'div', 'videoPlayerPlayHead');
   var durationText = newelt(slider, 'span', 'videoPlayerDurationText');
+  var fullscreenButton = newelt(slider, 'button',
+                        'videoPlayerFullscreenButton');
 
   this.poster = poster;
   this.player = player;

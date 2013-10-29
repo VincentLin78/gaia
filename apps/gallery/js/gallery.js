@@ -303,6 +303,7 @@ function initDB() {
     // on tablet, we'll preview latest one if scanend and user not choose any
     // yet
     else if (!HasFocusdOnThumbnail && HasPreviewMode) {
+      $('frames').classList.remove('loading-background');
       updateFrames(currentFileIndex);
       updateFocusThumbnail();
       HasFocusdOnThumbnail = true;

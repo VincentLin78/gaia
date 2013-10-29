@@ -49,39 +49,15 @@ footer {
 }
 
 #frames {
-  top: 5rem;
-  height: calc(100% - 5rem);
+  top: 6rem;
+  left: 1rem;
+  height: calc(100% - 7rem);
+  width: calc(100% - 2rem);
 }
 
 #thumbnails.offscreen {
   top: 5rem;
   visibility: visible;
-}
-
-#crop-back-button:after,
-#pick-back-button:after,
-#edit-cancel-button:after,
-#fullscreen-back-button-tablet:after,
-#thumbnails-cancel-button:after {
-  width: 5.2rem;
-}
-
-#crop-back-button .icon,
-#pick-back-button .icon,
-#edit-cancel-button .icon,
-#fullscreen-back-button-tablet .icon,
-#thumbnails-select-top .icon {
-  width: 5rem;
-  left: 0.2rem;
-}
-
-#crop-header,
-#pick-header,
-#edit-title,
-#picture-title,
-#thumbnails-number-selected,
-#fullscreen-title {
-  padding: 0 1rem 0px 5.2rem;
 }
 
 #thumbnails-list-top {
@@ -101,10 +77,6 @@ footer {
 }
 #fullscreen-toolbar {
   display: none;
-}
-
-#fullscreen-toolbar-header {
-  display: block;
 }
 
 #fullscreen-view.toolbarhidden #fullscreen-toolbar {
@@ -133,17 +105,23 @@ footer {
   padding-top: 0;
 }
 
-#edit-effect-none:before {
+#edit-effect-none:before,
+#edit-border-none:before {
   content: "";
+  position: absolute;
+  left: 0;
   display: block;
   background: url("images/selection_mask_L.png") repeat-y scroll 0% 0% transparent;
   height: 100%;
   width: 5rem;
 }
 
+#edit-border-thick-black:after,
 #edit-effect-faded:after {
   content: "";
   display: block;
+  position: absolute;
+  right: 0;
   background: url("images/selection_mask_R.png") repeat-y scroll 0% 0% transparent;
   height: 100%;
   width: 5rem;
@@ -155,15 +133,40 @@ footer {
   height: 8rem;
   left: calc(100% - 3rem);
   padding-top: 3.6rem;
-  padding-left: 2rem;
   font-size: 1.8rem;
+  text-align: center;
   background: url("images/slider-indicator.png") no-repeat scroll center center transparent;
 }
 #sliderthumb.active {
   background: url("images/slider-indicator.png") no-repeat scroll center center transparent;
 }
+#edit-toolbar a.selected.radio.button {
+  outline: none;
+  outline-offset: 0;
+}
 #edit-exposure-button {
-  background-image: url("images/actionicon_gallery_exposure.png");
+  background: url("images/actionicon_gallery_exposure.png") no-repeat center/3rem, url("images/tab.png") repeat-x center;
+}
+#edit-exposure-button.selected {
+  background: url("images/actionicon_gallery_exposure.png") no-repeat center/3rem, url("images/tab_selected.png") repeat-x center;
+}
+#edit-crop-button {
+  background: url("images/actionicon_gallery_edit_crop_30x30.png") no-repeat center/3rem, url("images/tab.png") repeat-x center;
+}
+#edit-crop-button.selected {
+  background: url("images/actionicon_gallery_edit_crop_30x30.png") no-repeat center/3rem, url("images/tab_selected.png") repeat-x center;
+}
+#edit-effect-button {
+  background: url("images/actionicon_gallery_edit_effects_30x30.png") no-repeat center/3rem, url("images/tab.png") repeat-x center;
+}
+#edit-effect-button.selected {
+  background: url("images/actionicon_gallery_edit_effects_30x30.png") no-repeat center/3rem, url("images/tab_selected.png") repeat-x center;
+}
+#edit-border-button {
+  background: url("images/actionicon_gallery_edit_borders_30x30.png") no-repeat center/3rem, url("images/tab.png") repeat-x center;
+}
+#edit-border-button.selected {
+  background: url("images/actionicon_gallery_edit_borders_30x30.png") no-repeat center/3rem, url("images/tab_selected.png") repeat-x center;
 }
 #exposure-slider {
   top: 7rem;
@@ -195,6 +198,7 @@ footer {
 }
 .sliderlabel {
   height: 1rem;
+  font-size: 1.8rem;
 }
 .sliderlabel:after {
   top: 1.5rem;
@@ -202,6 +206,122 @@ footer {
 #edit-toolbar {
   height: 6rem;
 }
+
+/* Video Player */
+.videoPlayerSlider > span {
+  line-height: 8rem;
+}
+
+.videoPlayerFooter {
+  height: 8rem;
+}
+
+.videoPlayerPauseButton {
+  top: 0;
+  height: 8rem;
+  background: url("images/video_pause_button_46x46.png") no-repeat center center / 4.6rem,
+              rgba(0,0,0,.5);
+  border: none;
+  border-radius: 0;
+}
+
+.videoPlayerPauseButton:active {
+  background: url("images/video_pause_pressed_46x46.png") no-repeat center center / 4.6rem,
+              rgba(0,0,0,.5);
+}
+
+.videoPlayerFullscreenButton {
+  display: block;
+}
+
+[data-view="fullscreenView"] .videoPlayerFullscreenButton,
+[data-view="thumbnailSelectView"] .videoPlayerFullscreenButton {
+  display: none;
+}
+
+/* Below css will move to building block til bug905065 is closed */
+#fullscreen-toolbar-header,
+#thumbnails-list-top {
+  display: block;
+}
+
+section[role="region"] > header:first-child > button,
+section[role="region"] > header:first-child > a {
+  position: relative;
+  width: 5rem;
+  height: 4.9rem;
+  background: none;
+  float: left;
+  overflow: visible;
+  margin: 0;
+}
+
+section[role="region"].skin-organic > header:first-child,
+.skin-organic section[role="region"] > header:first-child,
+section[role="region"].skin-dark  > header:first-child,
+.skin-dark  section[role="region"] > header:first-child {
+  background: url("images/ui/tablet_header.png") repeat-x scroll 0% 0% / auto 100% transparent;
+}
+section[role="region"] > header:first-child h1 {
+  padding: 0 1rem 0px 2rem;
+}
+section[role="region"] > header:first-child .icon {
+  width: 5rem;
+}
+section[role="region"] > header:first-child > a:not([aria-disabled="true"]):active:after,
+section[role="region"] > header:first-child > button:not(:disabled):active:after,
+section[role="region"] > header:first-child > a:not([aria-disabled="true"]):hover:after,
+section[role="region"] > header:first-child > button:not(:disabled):hover:after,
+section[role="region"] > header:first-child menu[type="toolbar"] a:not([aria-disabled="true"]):hover,
+section[role="region"] > header:first-child menu[type="toolbar"] button:not(:disabled):hover,
+section[role="region"] > header:first-child menu[type="toolbar"] a:not([aria-disabled="true"]):active,
+section[role="region"] > header:first-child menu[type="toolbar"] button:not(:disabled):active  {
+  background: url("images/ui/tablet_header_pressed.png") repeat-x center / 0.2rem transparent !important;
+}
+section[role="region"] > header:first-child menu[type="toolbar"] a,
+section[role="region"] > header:first-child menu[type="toolbar"] button {
+  width: 8.2rem;
+}
+section[role="region"].skin-organic > header:first-child a:after,
+.skin-organic section[role="region"] > header:first-child a:after,
+section[role="region"].skin-dark > header:first-child a:after,
+.skin-dark section[role="region"] > header:first-child a:after,
+section[role="region"].skin-organic > header:first-child button:after,
+.skin-organic section[role="region"] > header:first-child button:after,
+section[role="region"].skin-dark > header:first-child button:after,
+.skin-dark section[role="region"] > header:first-child button:after {
+  background: url("images/ui/tablet_button_separator.png") no-repeat right / 0.2rem transparent;
+}
+
+section[role="region"] > header:first-child > button:after,
+section[role="region"] > header:first-child > a:after {
+  width: 5.2rem;
+}
+
+section[role="region"] > header:first-child menu[type="toolbar"] a:after,
+section[role="region"] > header:first-child menu[type="toolbar"] button:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  height: 5rem;
+  width: 8.2rem;
+  background: url("images/ui/tablet_button_separator.png") no-repeat left / 0.2rem transparent;
+}
+
+[data-view="previewView"] #fullscreen-toolbar-header:before,
+[data-view="thumbnailListView"] #fullscreen-toolbar-header:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  height: 5rem;
+  width: 0.2rem;
+  background: url("images/ui/tablet_section_divider.png") no-repeat left;
+}
+
 @media (orientation: landscape) {
   #frames.loading-background {
     background: url("images/img_preload.png") no-repeat center center transparent;
@@ -225,11 +345,18 @@ footer {
     visibility: visible;
     width: 40rem;
   }
-
+  
   #thumbnail-list-view,
   #thumbnail-select-view {
     width: 40rem;
   }
+
+  [data-view="thumbnailListView"] .thumbnail.focus,
+  [data-view="previewView"] .thumbnail.focus {
+    outline: solid #00aacc 0.3rem;
+    outline-offset: -0.2rem;
+  }
+
   /* rewrite original size */
   .thumbnail {
     width: calc((100% - 0.4rem) / 3);
@@ -248,8 +375,8 @@ footer {
     width: 100%;
   }
   [data-view="pickView"] #thumbnails .thumbnail {
-    width: calc((100% - 1.4rem) / 8);
-    padding: 0 0 calc((100% - 1.4rem) / 8);
+    width: calc((100% - 1rem) / 6);
+    padding: 0 0 calc((100% - 1em) / 6);
     margin-bottom: 0.2rem;
   }
   [data-view="pickView"] #thumbnails .thumbnail:nth-child(3n) {
@@ -258,10 +385,9 @@ footer {
   [data-view="pickView"] #thumbnails .thumbnail:nth-child(4n) {
     margin-right: 0.2rem;
   }
-  [data-view="pickView"] #thumbnails .thumbnail:nth-child(8n) {
+  [data-view="pickView"] #thumbnails .thumbnail:nth-child(6n) {
     margin-right: 0rem;
   }
-
   #sliderline {
     width: 90rem;
     left: calc(50% - 45rem);
@@ -288,6 +414,41 @@ footer {
   #slider3 {
     left: calc(50% - 45rem + (100% - 2 * (50% - 45rem)));
   }
+  /* VideoPlayer.css */
+  .videoPlayerPauseButton {
+    width: 9rem;
+  }
+  .videoPlayerSlider {
+    left: 10rem;
+  }
+  .videoPlayerProgress {
+    left: 7rem;
+    right: 15rem;
+  }
+  .videoPlayerSlider .videoPlayerElapsedText {
+    text-align: left;
+    left: 0;
+    width: 6rem;
+  }
+  .videoPlayerSlider .videoPlayerDurationText {
+    text-align: center;
+    right: 8rem;
+    width: 5rem;
+  }
+  [data-view="fullscreenView"] .videoPlayerPauseButton {
+    width: 19rem;
+  }
+  [data-view="fullscreenView"] .videoPlayerSlider {
+    left: 20rem;
+  }
+  [data-view="fullscreenView"] .videoPlayerProgress {
+    left: 7rem;
+  }
+  [data-view="fullscreenView"] .videoPlayerSlider .videoPlayerDurationText {
+    text-align: left;
+    right: 0rem;
+    width: 10rem;
+  }
 }
 @media (orientation: portrait) {
   [data-view="previewView"] #fullscreen-view,
@@ -312,6 +473,12 @@ footer {
     padding: 0 0 calc((100% - 0.6rem) / 4);
     margin-right: 0.2rem;
     margin-bottom: 0.2rem;
+  }
+  .thumbnail.focus {
+    outline: none;
+  }
+  .thumbnail.selected {
+    outline: solid #00aacc 0.3rem;
   }
   .thumbnail:nth-child(4n) {
     margin-right: 0;
@@ -341,5 +508,24 @@ footer {
   }
   #slider3 {
     left: calc(50% - 30rem + (100% - 2 * (50% - 30rem)));
+  }
+  /* VideoPlayer.css */
+  .videoPlayerElapsedText {
+    width: 6rem;
+  }
+  .videoPlayerPauseButton {
+    width: 12rem;
+  }
+  .videoPlayerSlider {
+    left: 14rem;
+  }
+  .videoPlayerSlider .videoPlayerProgress {
+    left: 7rem;
+    right: 10rem;
+  }
+  .videoPlayerSlider .videoPlayerDurationText {
+    text-align: left;
+    right: 0;
+    width: 8rem;
   }
 }

@@ -191,8 +191,7 @@ section {
   margin-right: 0;
 }
 
-.thumbnail.selected,
-.thumbnail.focus {
+.thumbnail.selected {
   outline: solid #00aacc 0.3rem;
   outline-offset: -0.2rem;
 }

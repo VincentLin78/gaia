@@ -130,9 +130,11 @@ function shareSingleItem() {
 // coming soon.
 var taptimer = null;
 function tapHandler(e) {
-  // If there is already a timer set, then this is is the second tap
-  // and we're about to get a dbl tap event, so ignore this one
-  if (taptimer)
+  // Ignore tab event if 1. there is already a timer set, then this
+  // is the second tab and we're about to get a dbl tap event
+  // 2. user or gallery itself has not yet clicked on any thumbnail
+  // then we ignore the tab event.
+  if (taptimer || !HasFocusdOnThumbnail)
     return;
   // If we don't get a second tap soon, then treat this as a single tap
   taptimer = setTimeout(function() {
@@ -162,6 +164,10 @@ function singletap(e) {
     // these cases happen only when it has preview mode
     case 'thumbnailListView':
     case 'previewView':
+      if (files[currentFileIndex].metadata.video &&
+          e.target.className !== 'videoPlayerFullscreenButton')
+        // only allow to click fullscreen button into fullscreen mode
+        return;
       setView('fullscreenView');
       resetFrames();
       break;
@@ -387,7 +393,7 @@ function resetFramesPosition() {
 // Switch from thumbnail list view to single-picture fullscreen view
 // and display the specified file
 function showFile(n) {
-  $('frames').classList.remove('loading-background');
+  frames.classList.remove('loading-background');
   updateFrames(n);
 
   // Disable the edit button if this is a video or mediaDB is scanning
