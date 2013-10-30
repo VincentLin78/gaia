@@ -3,7 +3,7 @@
 var GridManager = (function() {
   //////// JERRY
   var TestOverLap = 10; // px
-
+  var noOverlap = false; // no over lap
 
   var MAX_ICONS_PER_PAGE = 4 * 4;
 
@@ -490,13 +490,13 @@ var GridManager = (function() {
     if (index) {
       var previous = pages[index - 1].container.style;
       previous.MozTransition = '';
-      transAll(index, windowWidth, 0, false);
+      transAll(index, windowWidth, 0, false, true);
     }
 
     if (index < pages.length - 1) {
       var next = pages[index + 1].container.style;
       next.MozTransition = '';
-      transAll(index, windowWidth, 0, true);
+      transAll(index, windowWidth, 0, true, true);
     }
 
     var current = toPage.container.style;
@@ -548,14 +548,16 @@ var GridManager = (function() {
       if (newPage.container.getBoundingClientRect().left !== 0) {
         // Pages are translated in X
         if (index > 0) {
-          pages[index - 1].moveByWithEffect(-windowWidth + TestOverLap,
+          pages[index - 1].moveByWithEffect(-windowWidth +
+            (noOverlap ? 0 : TestOverLap),
             duration);
         }
 
         newPage.moveByWithEffect(0, duration);
 
         if (index < pages.length - 1) {
-          pages[index + 1].moveByWithEffect(windowWidth - TestOverLap,
+          pages[index + 1].moveByWithEffect(windowWidth -
+            (noOverlap ? 0 : TestOverLap),
             duration);
         }
 
@@ -1321,6 +1323,7 @@ var GridManager = (function() {
   }
 
   function transAll(now, width, dist, arrow) {
+    var over = !noOverlap ? TestOverLap : 0;
     for (var i = 0; i < pages.length; i++) {
 
       var dis = i - now;
@@ -1328,11 +1331,11 @@ var GridManager = (function() {
       if (dis === 1) {
         page.container.style.MozTransform = 'translateZ(1px) ' +
             'translateX(' +
-              (width + dist - TestOverLap) + 'px)';
+              (width + dist - over) + 'px)';
       } else if (dis === -1) {
         page.container.style.MozTransform = 'translateZ(1px) ' +
             'translateX(' +
-              (-width + dist + TestOverLap) + 'px)';
+              (-width + dist + over) + 'px)';
       }
       if (Math.abs(dis) == 0) {
           page.container.style.MozTransform = 'translateZ(1px) ' +
