@@ -259,58 +259,12 @@ var GridManager = (function() {
 
         var previous, next, pan;
 
-        if (currentPage === 0) {
-          next = pages[currentPage + 1].container.style;
-          refresh = function(e) {
-            if (deltaX <= 0) {
-              next.MozTransform =
-                'translateX(' + (windowWidth + deltaX) + 'px)';
-              current.MozTransform = 'translateX(' + deltaX + 'px)';
-            } else {
-              startX = currentX;
-            }
-          };
-        } else if (currentPage === pages.length - 1) {
-          previous = pages[currentPage - 1].container.style;
-          refresh = function(e) {
-            if (deltaX >= 0) {
-              previous.MozTransform =
-                'translateX(' + (-windowWidth + deltaX) + 'px)';
-              current.MozTransform = 'translateX(' + deltaX + 'px)';
-            } else {
-              startX = currentX;
-            }
-          };
-        } else {
-          previous = pages[currentPage - 1].container.style;
-          next = pages[currentPage + 1].container.style;
-          refresh = function(e) {
-            if (deltaX >= 0) {
-              previous.MozTransform =
-                'translateX(' + (-windowWidth + deltaX) + 'px)';
+        if (currentPage === 0 || currentPage === pages.length - 1)
+          startX = currentX;
 
-              // If we change direction make sure there isn't any part
-              // of the page on the other side that stays visible.
-              if (forward) {
-                forward = false;
-                next.MozTransform = 'translateX(' + windowWidth + 'px)';
-              }
-            } else {
-              next.MozTransform =
-                'translateX(' + (windowWidth + deltaX) + 'px)';
-
-              // If we change direction make sure there isn't any part
-              // of the page on the other side that stays visible.
-              if (!forward) {
-                forward = true;
-                previous.MozTransform = 'translateX(-' + windowWidth + 'px)';
-              }
-            }
-
-            current.MozTransform = 'translateX(' + deltaX + 'px)';
-          };
-        }
-
+        refresh = function(e) {
+          switchPages(currentPage, deltaX);
+        };
         pan = function(e) {
           e.preventDefault();
           e.stopImmediatePropagation();
@@ -459,18 +413,17 @@ var GridManager = (function() {
     if (index) {
       var previous = pages[index - 1].container.style;
       previous.MozTransition = '';
-      previous.MozTransform = 'translateX(-' + windowWidth + 'px)';
     }
 
     if (index < pages.length - 1) {
       var next = pages[index + 1].container.style;
       next.MozTransition = '';
-      next.MozTransform = 'translateX(' + windowWidth + 'px)';
     }
 
     var current = toPage.container.style;
     current.MozTransition = '';
-    current.MozTransform = 'translateX(0)';
+
+    switchPages(index, 0);
 
     delete fromPage.container.dataset.currentPage;
     toPage.container.dataset.currentPage = 'true';
@@ -516,13 +469,15 @@ var GridManager = (function() {
       if (newPage.container.getBoundingClientRect().left !== 0) {
         // Pages are translated in X
         if (index > 0) {
-          pages[index - 1].moveByWithEffect(-windowWidth, duration);
+          // Overlap 1px to make sure it prerender
+          pages[index - 1].moveByWithEffect(-windowWidth + 1, duration);
         }
 
         newPage.moveByWithEffect(0, duration);
 
         if (index < pages.length - 1) {
-          pages[index + 1].moveByWithEffect(windowWidth, duration);
+          // Overlap 1px to make sure it prerender
+          pages[index + 1].moveByWithEffect(windowWidth - 1, duration);
         }
 
         container.addEventListener('transitionend', function transitionEnd(e) {
@@ -1305,7 +1260,19 @@ var GridManager = (function() {
 
     return app.origin + url;
   }
-
+  function switchPages(now, dist) {
+    // overlap 1px to make sure it prerender, Bug 931262
+    if (pages[now - 1]) {
+      pages[now - 1].container.style.MozTransform = '' +
+        'translateX(' + (-windowWidth + dist + 1) + 'px)';
+    }
+    if (pages[now + 1]) {
+      pages[now + 1].container.style.MozTransform = '' +
+        'translateX(' + (windowWidth + dist - 1) + 'px)';
+    }
+    pages[now].container.style.MozTransform = '' +
+            'translateX(' + dist + 'px)';
+  }
   function calculateDefaultIcons() {
     defaultAppIcon = new TemplateIcon();
     defaultAppIcon.loadDefaultIcon();
