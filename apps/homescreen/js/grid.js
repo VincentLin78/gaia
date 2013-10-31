@@ -2,8 +2,8 @@
 
 var GridManager = (function() {
   //////// JERRY
-  var TestOverLap = 10; // px
-  var OverlapWhenStop = true; // no over lap
+  var TestOverLap = 1; // css px
+  var OverlapWhenStop = true;
 
   var MAX_ICONS_PER_PAGE = 4 * 4;
 
